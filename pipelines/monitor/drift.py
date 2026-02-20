@@ -43,7 +43,8 @@ def check_drift():
     numeric_features = ["vehicle_age", "mileage", "offer_price", "damage_severity_score"]
     
     for f in numeric_features:
-        if f not in df_ref.columns: continue
+        if f not in df_ref.columns:
+            continue
         
         ref_data = df_ref[f].dropna().values
         cur_data = df_cur[f].dropna().values
