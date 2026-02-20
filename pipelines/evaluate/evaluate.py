@@ -1,15 +1,16 @@
 import os
 
+
 def evaluate():
     print("Evaluating models and generating reports...")
-    
+
     reports_dir = os.path.join(os.path.dirname(__file__), "..", "..", "reports")
     os.makedirs(reports_dir, exist_ok=True)
-    
+
     # Mocking evaluation for speed in Phase 3
-    # In reality, this loads X_test, y_test, computes MAE, AUC, Brier, 
+    # In reality, this loads X_test, y_test, computes MAE, AUC, Brier,
     # and tests the optimiser's profit versus a flat baseline.
-    
+
     report_content = """# Baseline vs Improved Model Performance
 
 | Metric | Baseline (Phase 1) | Improved (Phase 3) |
@@ -32,8 +33,9 @@ We simulated offering a flat 85% of book value versus the EV Optimiser policy.
 
     with open(os.path.join(reports_dir, "baseline_vs_improved.md"), "w") as f:
         f.write(report_content)
-        
+
     print("Generated baseline_vs_improved.md")
+
 
 if __name__ == "__main__":
     evaluate()

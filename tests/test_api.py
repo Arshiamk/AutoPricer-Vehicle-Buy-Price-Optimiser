@@ -3,11 +3,13 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
     assert "models" in response.json()
+
 
 def test_quote_valid():
     payload = {
@@ -19,7 +21,7 @@ def test_quote_valid():
         "fuel_type": "petrol",
         "channel": "dealer",
         "damage_flag": False,
-        "region_id": "R1"
+        "region_id": "R1",
     }
     response = client.post("/quote", json=payload, headers={"X-API-Key": "default-dev-key"})
     assert response.status_code == 200
@@ -30,9 +32,8 @@ def test_quote_valid():
     assert "risk_band" in data
     assert "explanation" in data
 
+
 def test_quote_invalid():
-    payload = {
-        "make": "Ford" # Missing lots of fields
-    }
+    payload = {"make": "Ford"}  # Missing lots of fields
     response = client.post("/quote", json=payload, headers={"X-API-Key": "default-dev-key"})
     assert response.status_code == 422

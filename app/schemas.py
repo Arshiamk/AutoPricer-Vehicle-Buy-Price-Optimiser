@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 
+
 class QuoteRequest(BaseModel):
     vehicle_id: Optional[str] = None
     make: str
@@ -12,6 +13,7 @@ class QuoteRequest(BaseModel):
     damage_flag: bool
     damage_type: Optional[str] = None
     region_id: Optional[str] = None
+
 
 class QuoteResponse(BaseModel):
     recommended_offer: float
