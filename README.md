@@ -1,6 +1,7 @@
 # AutoPricer – Vehicle Buy-Price Optimiser 🚗💷
 
 [![CI](https://github.com/Arshiamk/AutoPricer-Vehicle-Buy-Price-Optimiser/actions/workflows/ci.yml/badge.svg)](https://github.com/Arshiamk/AutoPricer-Vehicle-Buy-Price-Optimiser/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-grade machine learning pricing system designed to optimise the trade-off between **Margin** and **Conversion Volume** in a vehicle-buying business (e.g., Cazoo, Carvana, WeBuyAnyCar).
 
@@ -115,3 +116,17 @@ If deployed with a real company's data, I would immediately:
 2. **Causal ML / Uplift**: Move from observational counterfactuals to true uplift modeling (e.g., Double ML) to isolate the causal effect of price changes, removing confounding bias in historical dealer negotiations.
 3. **dbt Cloud / Airflow**: Move the ingestion and monitoring scripts from plain Make targets into a mature orchestrator like Airflow or Prefect.
 4. **Feature Store**: Persist `features.parquet` into a proper low-latency feature store (e.g., Redis) to guarantee train-serve exactness for the FastAPI application.
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+Feel free to check out the [issues page](https://github.com/Arshiamk/AutoPricer-Vehicle-Buy-Price-Optimiser/issues).
+For detailed instructions, please read our [Contributing Guidelines](CONTRIBUTING.md).
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
