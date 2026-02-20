@@ -1,4 +1,4 @@
-from app.optimiser import compute_ev, optimise_offer, compute_expected_costs
+from app.optimiser import compute_ev, optimise_offer
 
 def test_compute_ev_zero_win_prob():
     ev = compute_ev(offer=5000, p_win=0.0, e_sale=7000, e_costs=500, price_q10=6000)
