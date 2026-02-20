@@ -367,7 +367,12 @@ elif page == "Policy Simulator":
                         if res.status_code == 200:
                             data = res.json()
                             st.session_state.dvla_data = data
-                            st.success(f"Found: {data['make']} {data['model']}")
+                            source_label = data.get("source", "UNKNOWN").replace("_", " ")
+                            st.success(
+                                f"**Found: {data['make']} {data['model']}**  \n"
+                                f"MOT Status: `{data['mot_status']}` ({data['mot_days_remaining']} days left)  \n"
+                                f"Data Source: `{source_label}`"
+                            )
                         else:
                             st.error(f"Error: {res.json().get('detail', 'Vehicle not found')}")
                     except Exception as e:
