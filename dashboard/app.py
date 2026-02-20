@@ -346,6 +346,35 @@ elif page == "Policy Simulator":
 
     with col1:
         st.markdown(
+            "<h3 style='font-size: 1.2rem; margin-bottom: 15px;'>DVLA Vehicle Lookup (UK)</h3>",
+            unsafe_allow_html=True,
+        )
+        with st.container(border=True):
+            col_l1, col_l2 = st.columns([3, 1])
+            with col_l1:
+                reg_input = st.text_input("Registration Plate", placeholder="e.g. AB12 CDE", label_visibility="collapsed")
+            with col_l2:
+                btn_lookup = st.button("Lookup", use_container_width=True)
+
+            if btn_lookup and reg_input:
+                api_url = os.getenv("AUTOPRICER_API_URL", "http://localhost:8000")
+                api_key = os.getenv("API_KEY", "default-dev-key")
+                with st.spinner("Fetching from DVLA/DVSA..."):
+                    try:
+                        session = get_session()
+                        headers = {"X-API-Key": api_key}
+                        res = session.get(f"{api_url}/lookup", params={"reg": reg_input}, headers=headers)
+                        if res.status_code == 200:
+                            data = res.json()
+                            st.session_state.dvla_data = data
+                            st.success(f"Found: {data['make']} {data['model']}")
+                        else:
+                            st.error(f"Error: {res.json().get('detail', 'Vehicle not found')}")
+                    except Exception as e:
+                        st.error(f"API Connection Error: {e}")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(
             "<h3 style='font-size: 1.2rem; margin-bottom: 15px;'>Vehicle Parameters</h3>",
             unsafe_allow_html=True,
         )
@@ -363,24 +392,49 @@ elif page == "Policy Simulator":
             pass
 
         with st.container(border=True):
+            # Pre-fill from DVLA if available
+            dvla_info = st.session_state.get("dvla_data", {})
+            pref_make = dvla_info.get("make")
+            pref_model = dvla_info.get("model")
+            pref_fuel = dvla_info.get("fuel_type")
+            pref_year = dvla_info.get("year", 2019)
+            pref_mileage = dvla_info.get("mileage", 45000)
+
             make_opts = list(makes_models.keys()) + ["Other (type manually)"]
-            make = st.selectbox("Make", make_opts)
+            
+            # Smart index for make
+            make_idx = 0
+            if pref_make:
+                match = [i for i, m in enumerate(make_opts) if pref_make.lower() == m.lower()]
+                make_idx = match[0] if match else len(make_opts) - 1
+                
+            make = st.selectbox("Make", make_opts, index=make_idx)
             final_make = make
             if make == "Other (type manually)":
-                final_make = st.text_input("Enter Make")
+                final_make = st.text_input("Enter Make", value=pref_make if pref_make else "")
 
             model_opts = makes_models.get(make, ["Generic"]) + ["Other (type manually)"]
-            model = st.selectbox("Model", model_opts)
+            
+            # Smart index for model
+            model_idx = 0
+            if pref_model:
+                match = [i for i, m in enumerate(model_opts) if pref_model.lower() == m.lower()]
+                model_idx = match[0] if match else len(model_opts) - 1
+
+            model = st.selectbox("Model", model_opts, index=model_idx)
             final_model = model
             if model == "Other (type manually)":
-                final_model = st.text_input("Enter Model")
+                final_model = st.text_input("Enter Model", value=pref_model if pref_model else "")
 
-            fuel = st.selectbox("Fuel", ["petrol", "diesel", "electric", "hybrid"])
+            fuel_opts = ["petrol", "diesel", "electric", "hybrid"]
+            fuel_idx = fuel_opts.index(pref_fuel.lower()) if pref_fuel and pref_fuel.lower() in fuel_opts else 0
+            fuel = st.selectbox("Fuel", fuel_opts, index=fuel_idx)
 
             years = list(range(2025, 2009, -1))
-            year = st.selectbox("Year", years, index=years.index(2019))
+            year_idx = years.index(pref_year) if pref_year in years else len(years)//2
+            year = st.selectbox("Year", years, index=year_idx)
 
-            mileage = st.number_input("Mileage", 0, 200000, 45000, step=1000)
+            mileage = st.number_input("Mileage", 0, 500000, pref_mileage, step=1000)
             channel = st.selectbox("Acquisition Channel", ["dealer", "private", "fleet"])
             damage = st.selectbox(
                 "Damage Severity", ["none", "scratches", "dents", "mechanical", "structural"]

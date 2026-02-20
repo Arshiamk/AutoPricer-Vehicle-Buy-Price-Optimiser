@@ -102,6 +102,21 @@ def health():
     return {"status": "ok", "models": models.get("meta", "Not loaded")}
 
 
+from app.dvla import fetch_dvla_data
+
+
+@app.get("/lookup")
+async def dvla_lookup(reg: str, api_key: str = Depends(get_api_key)):
+    """
+    Look up vehicle details using UK Registration Number.
+    Powered by official DVLA/DVSA APIs or deterministic mocks if keys are absent.
+    """
+    result = await fetch_dvla_data(reg)
+    if result.get("status") == "error":
+        raise HTTPException(status_code=404, detail=result.get("message"))
+    return result
+
+
 @app.post("/quote", response_model=QuoteResponse)
 def get_quote(req: QuoteRequest, api_key: str = Depends(get_api_key)):
     model_source = os.getenv("MODEL_SOURCE", "local")
