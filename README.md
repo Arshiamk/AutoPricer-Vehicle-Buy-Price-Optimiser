@@ -14,33 +14,34 @@ Please see the [Walkthrough Document](walkthrough.md) for a detailed, phase-by-p
 
 ---
 
-## 🚀 How to Run Locally in 3 Commands
+## 🚀 3-Command Quickstart
 
 The repository is fully dockerised and requires no external data downloads (it includes a realistic synthetic auction generator).
 
-1. **Setup Environment & Data**
+```bash
+cp .env.example .env
+make setup generate train
+docker-compose up -d
+```
 
-   ```bash
-   cp .env.example .env
-   python -m venv .venv
-   source .venv/bin/activate  # or .\.venv\Scripts\Activate.ps1 on Windows
-   make setup
-   make generate  # Generates 50k counterfactual training rows
-   ```
+- **Dashboard**: `http://localhost:8501`
+- **API Docs**: `http://localhost:8000/docs`
 
-2. **Train Models**
+---
 
-   ```bash
-   make train
-   ```
+## 🏛 Architecture
 
-3. **Spin up the Stack (API + Dashboard + DB)**
-   ```bash
-   docker-compose up -d
-   ```
-
-   - **Dashboard**: `http://localhost:8501`
-   - **API Docs**: `http://localhost:8000/docs`
+```mermaid
+graph TD
+    A[Synthetic Data Generator] -->|Vehicles/Enquiries/Sales| B[(Postgres raw)]
+    B -->|dbt transformations| C[(Postgres marts)]
+    C -->|train_price_model.py| D[XGBRegressor & Quantile Models]
+    C -->|train_conversion_model.py| E[Calibrated Classifier]
+    D --> F[Local Model Registry]
+    E --> F
+    F --> G[FastAPI]
+    G -->|EV Optimiser| H[Streamlit Dashboard]
+```
 
 ---
 

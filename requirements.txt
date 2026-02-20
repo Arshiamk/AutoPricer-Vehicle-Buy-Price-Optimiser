@@ -1,0 +1,20 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+xgboost
+pydantic
+pydantic-settings
+sqlalchemy
+psycopg2-binary
+dbt-postgres
+streamlit
+plotly
+pytest
+pytest-env
+httpx
+ruff
+black
+python-dotenv
+shap; extra == 'explain'

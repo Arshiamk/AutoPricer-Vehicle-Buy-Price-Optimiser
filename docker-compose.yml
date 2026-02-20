@@ -32,6 +32,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-autopricer}
       - MODEL_SOURCE=local
+      - API_KEY=${API_KEY:-default-dev-key}
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,7 +50,8 @@ services:
     ports:
       - "8501:8501"
     environment:
-      - API_URL=http://api:8000
+      - AUTOPRICER_API_URL=http://api:8000
+      - API_KEY=${API_KEY:-default-dev-key}
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-autopricer}
     depends_on:
       api:

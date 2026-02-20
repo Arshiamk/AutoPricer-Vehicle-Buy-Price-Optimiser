@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_enquiries
+    columns:
+      - name: enquiry_id
+        tests:
+          - unique
+          - not_null
+      - name: channel
+        tests:
+          - accepted_values:
+              values: ["dealer", "private", "fleet"]
+
+  - name: stg_vehicles
+    columns:
+      - name: vehicle_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_regions
+    columns:
+      - name: region_id
+        tests:
+          - unique
+          - not_null
+
+  - name: mart_training_set
+    columns:
+      - name: enquiry_id
+        tests:
+          - unique
+          - not_null
+      - name: vehicle_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_vehicles')
+              field: vehicle_id
